@@ -1,6 +1,6 @@
 export const Dashboard = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center ">
       <div
         className="
       bg-slate-300
@@ -13,7 +13,10 @@ export const Dashboard = () => {
       shadow-lg
       "
       >
-        <input className="bg-white p-1 rounded-3xl" />
+        <input
+          className="bg-white p-1 rounded-3xl"
+          placeholder="Enter the pdf"
+        />
         <div>
           <button className="bg-rose-200 p-1 rounded-3xl ml-2">Submit</button>
         </div>
