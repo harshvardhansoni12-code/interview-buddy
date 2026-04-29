@@ -1,3 +1,3 @@
-export async function POST() {
+export async function POST(request) {
   const { content } = await request.json();
 }
