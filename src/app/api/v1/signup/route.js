@@ -13,16 +13,11 @@ export async function POST(request) {
       status: 404,
     });
   }
-  const isPasswordValid = await bcrypt.compare(password, userFound.password);
-  if (!isPasswordValid) {
-    return new Response(JSON.stringify({ message: "Invalid password" }), {
-      status: 401,
-    });
-  }
+  const hashedPassword = await bcrypt.hash(password, 10);
   const userCreated = await prisma.user.create({
     data: {
       email,
-      password,
+      password: hashedPassword,
     },
   });
   if (!userCreated) {
