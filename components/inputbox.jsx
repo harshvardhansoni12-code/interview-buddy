@@ -45,7 +45,7 @@ export const InputBox = () => {
         className="h-12 px-6 my-1 rounded-xl text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-700 shadow-sm flex items-center justify-center shrink-0 transition-transform hover:scale-105 active:scale-95 font-semibold"
         type="button"
       >
-        submit
+        Submit
       </Button>
     </div>
   );

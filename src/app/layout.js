@@ -1,12 +1,12 @@
-import { Roboto } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "../../components/navbar/navbar";
 import { AuthSessionProvider } from "../../components/providers/session-provider";
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata = {
@@ -16,7 +16,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${roboto.variable} h-full antialiased`}>
+    <html lang="en" className={`${poppins.variable} font-sans h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AuthSessionProvider>
           <Navbar />
