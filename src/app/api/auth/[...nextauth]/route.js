@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
-const authOptions = {
+export const authOptions = {
   providers: [
     CredentialsProvider({
       credentials: {
@@ -14,16 +17,20 @@ const authOptions = {
           },
         });
         if (!userFound) {
-          return Response.json({ error: "User not found" });
+          return null;
         }
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           userFound.password,
         );
         if (!isPasswordValid) {
-          return Response.json({ error: "Invalid password" });
+          return null;
         }
-        return Response.json({ user: userFound });
+        return {
+          id: userFound.id,
+          email: userFound.email,
+          name: userFound.name,
+        };
       },
     }),
   ],
@@ -38,7 +45,7 @@ const authOptions = {
           await prisma.user.create({
             data: {
               email: user.email,
-              fullname: user.name,
+              name: user.name,
               password: "", // GitHub users don't need password
             },
           });

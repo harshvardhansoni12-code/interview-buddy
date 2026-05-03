@@ -1,6 +1,7 @@
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "../../components/navbar/navbar";
+import { AuthSessionProvider } from "../../components/providers/session-provider";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -17,8 +18,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
+        <AuthSessionProvider>
+          <Navbar />
+          {children}
+        </AuthSessionProvider>
       </body>
     </html>
   );
