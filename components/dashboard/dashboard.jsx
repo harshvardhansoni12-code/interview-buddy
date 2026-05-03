@@ -1,5 +1,6 @@
 import React from "react";
 import { InputBox } from "../inputbox";
+// This is a placeholder dashboard component. You can replace the Input Box with your actual dashboard content.
 export const Dashboard = () => {
   return (
     <div className="flex justify-center items-center h-screen">
