@@ -1,3 +1,4 @@
 export async function POST(req) {
-  const { questions, answers } = await req.json();
+  const { data } = await req.json();
+  console.log("Received data in create-question API route:", data);
 }
