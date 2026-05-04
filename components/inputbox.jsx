@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getServerSession } from "next-auth";
+import { extractTextFromPDF } from "@/lib/pdf-utils";
 export const InputBox = () => {
   const [pdf, setPdf] = useState(null);
   const fileRef = useRef(null);
@@ -16,6 +18,22 @@ export const InputBox = () => {
     setPdf(file);
     //
   };
+
+  const handleSubmit = async () => {
+    const text = await extractTextFromPDF(pdf);
+    if (!text) {
+      return console.error("Failed to extract text from the PDF document.");
+    }
+    const response = await fetch("/api/create-question", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (!response.ok) {
+      return console.error("Failed to submit the PDF document.");
+    }
+  };
+  //
   return (
     <div>
       <div className="relative flex-1 min-w-0">
@@ -25,6 +43,9 @@ export const InputBox = () => {
           placeholder="Select a PDF document to begin..."
           value={pdf ? pdf.name : ""}
           onClick={DesktopClick}
+          onChange={(e) => {
+            setPdf(e.target.value);
+          }}
           className="w-full h-12 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 placeholder:text-slate-400 dark:placeholder:text-slate-500 cursor-pointer truncate text-base font-medium"
         />
         <input
@@ -44,6 +65,7 @@ export const InputBox = () => {
       <Button
         className="h-12 px-6 my-1 rounded-xl text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-700 shadow-sm flex items-center justify-center shrink-0 transition-transform hover:scale-105 active:scale-95 font-semibold"
         type="button"
+        onClick={handleSubmit}
       >
         Submit
       </Button>
