@@ -3,9 +3,10 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getServerSession } from "next-auth";
+import { useRouter } from "next/navigation";
 import { extractTextFromPDF } from "@/lib/pdf-utils";
 export const InputBox = () => {
+  const Router = useRouter();
   const [pdf, setPdf] = useState(null);
   const fileRef = useRef(null);
   const DesktopClick = () => {
@@ -24,7 +25,7 @@ export const InputBox = () => {
     if (!text) {
       return console.error("Failed to extract text from the PDF document.");
     }
-    const response = await fetch("/api/create-question", {
+    const response = await fetch("/api/create-skill", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
@@ -32,6 +33,7 @@ export const InputBox = () => {
     if (!response.ok) {
       return console.error("Failed to submit the PDF document.");
     }
+    Router.push("/skills");
   };
   //
   return (
