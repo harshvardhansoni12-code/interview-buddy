@@ -19,7 +19,7 @@ model User {
   password  String
   createdAt DateTime @default(now())
   skills     Skills[] @relation("user")
-  questions   Question[] @relation("user")
+  questions   QuestionAndAnswer[] @relation("user")
 }
 
 model Skills{
@@ -28,12 +28,12 @@ model Skills{
   skills     String[]
   users      User   @relation("user", fields: [authorId], references: [id])  
   authorId     String 
-  questions   Question[] @relation("skill")
+  questions   QuestionAndAnswer[] @relation("skill")
 }
 
-model Question{
+model QuestionAndAnswer {
   id     String     @id @default(uuid())
-  question String[]
+  questionandanswer String[]
   skills  Skills @relation("skill", fields: [skillId], references: [id] )
   skillId String
   users  User @relation("user", fields: [userId], references: [id] )
