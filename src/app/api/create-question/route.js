@@ -10,7 +10,7 @@ export async function POST(req) {
    `;
     // process the data and get the skills
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-lite-2.5" });
     const result = await model.generateContent(prompt);
     const response = result.response;
     const { questionandanswer } = JSON.parse(response.text());
@@ -22,13 +22,15 @@ export async function POST(req) {
       },
     });
     if (!questionCreated) {
-      return new Response("Failed to create question and answer", {
+      return Response.json("Failed to create question and answer", {
         status: 500,
       });
     }
-    return new Response(JSON.stringify({ questionandanswer }), { status: 200 });
+    return Response.json(JSON.stringify({ questionandanswer }), {
+      status: 200,
+    });
   } catch (error) {
     console.error("Error processing request:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return Response.json("Internal Server Error", { status: 500 });
   }
 }

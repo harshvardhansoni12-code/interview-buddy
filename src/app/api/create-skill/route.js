@@ -11,7 +11,7 @@ export async function POST(req) {
   ${text}`;
     // process the data and get the skills
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-lite-2.5" });
     const result = await model.generateContent(prompt);
     const response = result.response;
     const skills = response.text();
