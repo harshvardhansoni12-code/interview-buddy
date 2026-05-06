@@ -1,5 +1,16 @@
+"use client";
+
 import React from "react";
-import { InputBox } from "../inputbox";
+import dynamic from "next/dynamic";
+
+const InputBox = dynamic(
+  () => import("../inputbox").then((mod) => ({ default: mod.InputBox })),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>,
+  },
+);
+
 // This is a placeholder dashboard component. You can replace the Input Box with your actual dashboard content.
 export const Dashboard = () => {
   return (

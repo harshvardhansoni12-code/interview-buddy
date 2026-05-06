@@ -1,3 +1,8 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
+
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
@@ -10,15 +15,15 @@ export async function POST(req) {
    `;
     // process the data and get the skills
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-lite-2.5" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt);
     const response = result.response;
     const { questionandanswer } = JSON.parse(response.text());
     const questionCreated = await prisma.questionAndAnswer.create({
       data: {
-        questionandanswer: JSON.stringify({ questionandanswer }),
+        questionandanswer: [JSON.stringify({ questionandanswer })],
         skillId: data.skillId,
-        userId: session.id,
+        userId: session.user.id,
       },
     });
     if (!questionCreated) {
