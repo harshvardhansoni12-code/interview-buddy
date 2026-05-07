@@ -4,11 +4,13 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { extractTextFromPDF } from "@/lib/pdf-utils";
 export const InputBox = () => {
   const Router = useRouter();
   const [pdf, setPdf] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const fileRef = useRef(null);
+
   const DesktopClick = () => {
     fileRef.current.click();
   };
@@ -17,25 +19,37 @@ export const InputBox = () => {
     const file = e.target.files[0];
     if (!file) return;
     setPdf(file);
-    //
+    setError(null);
   };
 
   const handleSubmit = async () => {
-    const text = await extractTextFromPDF(pdf);
-    if (!text) {
-      return console.error("Failed to extract text from the PDF document.");
+    if (!pdf) {
+      setError("Please select a PDF file first.");
+      return;
     }
-    const response = await fetch("/api/create-skill", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
-    if (!response.ok) {
-      return console.error("Failed to submit the PDF document.");
+    setLoading(true);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", pdf);
+      
+      const response = await fetch("/api/create-skill", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setError(data.error || "Failed to submit. Please try again.");
+        return;
+      }
+      Router.push("/skills");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    Router.push("/skills");
   };
-  //
   return (
     <div>
       <div className="relative flex-1 min-w-0">
@@ -45,9 +59,6 @@ export const InputBox = () => {
           placeholder="Select a PDF document to begin..."
           value={pdf ? pdf.name : ""}
           onClick={DesktopClick}
-          onChange={(e) => {
-            setPdf(e.target.value);
-          }}
           className="w-full h-12 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 placeholder:text-slate-400 dark:placeholder:text-slate-500 cursor-pointer truncate text-base font-medium"
         />
         <input
@@ -58,9 +69,13 @@ export const InputBox = () => {
           className="hidden"
         />
       </div>
+      {error && (
+        <p className="text-red-500 text-sm mt-1 px-1">{error}</p>
+      )}
       <Button
         className="h-12 px-6 rounded-xl text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-700 shadow-sm flex items-center justify-center shrink-0 transition-transform hover:scale-105 active:scale-95 font-semibold"
         onClick={DesktopClick}
+        disabled={loading}
       >
         {pdf ? "Change" : "Browse"}
       </Button>
@@ -68,8 +83,9 @@ export const InputBox = () => {
         className="h-12 px-6 my-1 rounded-xl text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-700 shadow-sm flex items-center justify-center shrink-0 transition-transform hover:scale-105 active:scale-95 font-semibold"
         type="button"
         onClick={handleSubmit}
+        disabled={loading}
       >
-        Submit
+        {loading ? "Processing..." : "Submit"}
       </Button>
     </div>
   );
